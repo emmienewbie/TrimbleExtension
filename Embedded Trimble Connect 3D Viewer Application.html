@@ -1,0 +1,2017 @@
+<!DOCTYPE html>
+<!-- saved from url=(0051)https://web.connect.trimble.com/examples/index.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+  <title>Embedded Trimble Connect 3D Viewer Application</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" href="https://web.connect.trimble.com/examples/%BASE_URL%icons/favicon.ico">
+  <link crossorigin="" rel="stylesheet" href="./Embedded Trimble Connect 3D Viewer Application_files/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T">
+  <link crossorigin="" rel="stylesheet" href="./Embedded Trimble Connect 3D Viewer Application_files/bootstrap-slider.min.css" integrity="sha256-G3IAYJYIQvZgPksNQDbjvxd/Ca1SfCDFwu2s2lt0oGo=">
+
+  <script crossorigin="" src="./Embedded Trimble Connect 3D Viewer Application_files/jquery-3.5.1.min.js.download" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2"></script>
+  <script crossorigin="" src="./Embedded Trimble Connect 3D Viewer Application_files/bootstrap.bundle.min.js.download"></script>
+  <script crossorigin="" src="./Embedded Trimble Connect 3D Viewer Application_files/bootstrap-slider.js.download" integrity="sha256-59/apVFrosMLFX2dHZLGvb3nPpu7e0Yx1rsDr1dTRrk="></script>
+  <script crossorigin="" src="./Embedded Trimble Connect 3D Viewer Application_files/renderjson.js.download"></script>
+
+  <style>
+    .blinking {
+      color: white;
+      background: #2a5b84;
+      -webkit-transition: background 1.0s ease-in-out;
+      -moz-transition: background 1.0s ease-in-out;
+      -ms-transition: background 1.0s ease-in-out;
+      transition: background 1.0s ease-in-out;
+    }
+
+    .close {
+      color: red;
+    }
+
+    .list-group {
+      max-height: 400px;
+      margin-bottom: 10px;
+      overflow: scroll;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .well {
+      min-height: 20px;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #e3e3e3;
+      border-radius: 4px;
+      -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+    }
+
+    .tooltip.in {
+      filter: alpha(opacity=90);
+      opacity: .9;
+    }
+
+    .popover {
+      max-width: 100%;
+      word-break: break-all;
+      word-wrap: break-word;
+      min-width: 400px;
+    }
+
+    .popover-title-row {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .popover-title-container {
+      width: 90%;
+    }
+
+    .close-popover-button {
+      cursor: pointer;
+    }
+
+    .renderjson {
+      font-size: 13px;
+    }
+
+    .dropdown-item {
+      cursor: pointer;
+    }
+
+    .viewer-setting-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .viewer-setting-row div {
+      margin-right: 10px;
+    }
+
+    .viewer-setting-row .key {
+      margin-right: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+    <div class="container plugin-example-container">
+      <h1 class="display-5">Trimble Connect 3D Viewer - Workspace API Example</h1>
+      <hr>
+      <div class="row" id="embedAccessTokenDiv" style="">
+        <div class="col-md-12">
+          <div class="my-3 row mb-3">
+            <label for="selectEnv" class="col-sm-2 col-form-label">Environment</label>
+            <div class="col-sm-4">
+                <select id="selectEnv" name="env" class="form-control">
+                  <option>prod</option>
+                  <option>int</option>
+                  <option>qa</option>
+                  <option selected="">stage</option>
+                </select>
+            </div>
+            (OR)
+            <div class="col-sm-5">
+              <input id="embedURL" placeholder="Enter embed URL as iframe src" type="text" class="form-control form-control" value="">
+            </div>
+          </div>
+
+          <div class="my-3 row mb-3">
+            <label for="accessToken" class="col-sm-2 col-form-label">AccessToken</label>
+            <div class="col-sm-10">
+                <input id="accessToken" placeholder="Enter AccessToken" type="text" class="form-control form-control" value="">
+            </div>
+          </div>
+          <div class="my-3 row mb-3">
+              <label for="refreshToken" class="col-sm-2 col-form-label">RefreshToken</label>
+              <div class="col-sm-10">
+                <input id="refreshToken" placeholder="Enter RefreshToken" type="text" class="form-control form-control" value="">
+              </div>
+          </div>
+          <hr>
+          <div class="my-3 row mb-3">
+              <label for="shareToken" class="col-sm-2 col-form-label">ShareToken</label>
+              <div class="col-sm-10">
+                <input id="shareToken" placeholder="Enter ShareToken" type="text" class="form-control form-control" value="">
+              </div>
+          </div>
+          <hr>
+          <div class="my-3 row mb-3">
+              <label for="projectId" class="col-sm-2 col-form-label">ProjectId</label>
+              <div class="col-sm-10">
+                <input id="projectId" placeholder="Enter ProjectId" type="text" class="form-control form-control" value="">
+              </div>
+          </div>
+          <div class="row my-4 col">
+            <button type="button" class="btn btn-primary" onclick="doConnect()">Load 3DViewer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="main" style="margin: 2rem; display: none;">
+      <hr class="my-1">
+      <div class="row ml-0 mr-0">
+        <div class="col-sm">
+          <div class="row">
+            <h5>Project</h5>
+          </div>
+          <div class="row">
+            <span class="mr-2">Name:</span>
+            <div id="projectData" class="flex-grow"></div>
+          </div>
+          <div class="row">
+            <span class="mr-2">ID:</span>
+            <input type="text" class="form-control col" id="txtProjectId" size="40" placeholder="Project ID" onkeypress="setProject(event)">
+            <button class="btn btn-info btn-sm" onclick="setProject()">Set</button>
+          </div>
+        </div>
+        <div class="col-sm">
+          <h5>User</h5>
+          <p id="userData">
+        </p></div>
+        <div class="col-sm">
+          <h5>
+            Selection
+            <span id="selectionState" class="small"></span>
+          </h5>
+          <div>
+            <form role="form">
+              <div class="form-group">
+                <select multiple="" class="form-control" id="selectionList" onchange="highlightSelected(this)">
+                </select>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="col-sm">
+          <button id="btnSetCamera" class="btn btn-primary btn-sm" data-target="#setCameraModal" onclick="(function(e){ $(&#39;#btnSetCamera&#39;).popover(&#39;show&#39;) })(event)" data-original-title="" title="">
+            Cameras
+            
+          </button>
+          
+          <p id="cameraState">
+          </p>
+        </div>
+      </div>
+      <div id="controller" class="well">
+        <button id="btnModelOps" class="btn btn-primary btn-sm" data-target="#setModelModal" onclick="(function(e){ $(&#39;#btnModelOps&#39;).popover(&#39;show&#39;) })(event)" data-original-title="" title="">
+          Models
+          
+        </button>
+        
+
+        <button id="btnShowFilteredObjects" class="btn btn-primary btn-sm" data-target="#getFilteredObjectModal" onclick="getFilteredObjects()" data-original-title="" title="">
+          Objects
+        </button>
+        
+
+        <button id="btnLayerOps" class="btn btn-primary btn-sm" data-target="#setLayerModal" onclick="(function(e){ $(&#39;#btnLayerOps&#39;).popover(&#39;show&#39;) })(event)" data-original-title="" title="">
+          Layers
+          
+        </button>
+        
+
+        <button id="btnSessionOps" class="btn btn-primary btn-sm" data-target="#setSessionModal" onclick="(function(e){ $(&#39;#btnSessionOps&#39;).popover(&#39;show&#39;) })(event)" data-original-title="" title="">
+          Session
+          
+        </button>
+        
+
+        <button id="btnSetUI" class="btn btn-primary btn-sm" data-target="#setUIModal" onclick="setUIModal()">
+          UI
+        </button>
+
+        <div id="tmpUiModalContent" class="d-none">
+          <div id="setUIModal">
+            <div class="ml-3">
+              <div class="form-group row m-2">
+                UI Customization
+              </div>
+              <hr class="my-1">
+              <div class="row form-check">
+                <label class="form-check-label mr-1"><input type="checkbox" class="form-check-input" checked="" element-name="MainToolbar" selected-state="visible" deselected-state="hidden" onchange="setUI(event)">Main toolbar -|</label>
+                <span class="col">
+                  <label class="form-check-label"><input type="checkbox" class="form-check-input" checked="" element-name="MainToolbar" selected-state="expanded" deselected-state="collapsed" onchange="setUI(event)">Expanded</label>
+                </span>
+                <span class="col ml-1" element-name="MainToolbar" name="state"></span>
+              </div>
+              <div class="row form-check">
+                <label class="form-check-label mr-1"><input type="checkbox" class="form-check-input" checked="" element-name="SidePanel" selected-state="visible" deselected-state="hidden" onchange="setUI(event)">Side panel -|</label>
+                <span class="col">
+                  <label class="form-check-label"><input type="checkbox" class="form-check-input" element-name="SidePanel" selected-state="expanded" deselected-state="collapsed" onchange="setUI(event)">Expanded</label>
+                </span>
+                <span class="col ml-1" element-name="SidePanel" name="state"></span>
+              </div>
+              <div class="row form-check">
+                <label class="form-check-label mr-1"><input type="checkbox" class="form-check-input" checked="" element-name="DetailsPanel.ToDos" selected-state="visible" deselected-state="hidden" onchange="setUI(event)">DetailsPanel.ToDos</label>
+                <span class="col ml-1" element-name="DetailsPanel.ToDos" name="state"></span>
+              </div>
+              <div class="row form-check">
+                <label class="form-check-label mr-1"><input type="checkbox" class="form-check-input" checked="" element-name="DetailsPanel.Views" selected-state="visible" deselected-state="hidden" onchange="setUI(event)">DetailsPanel.Views</label>
+                <span class="col ml-1" element-name="DetailsPanel.Views" name="state"></span>
+              </div>
+              <div class="row form-check">
+                <label class="form-check-label mr-1"><input type="checkbox" class="form-check-input" checked="" element-name="DetailsPanel.Clashes" selected-state="visible" deselected-state="hidden" onchange="setUI(event)">DetailsPanel.Clashes</label>
+                <span class="col ml-1" element-name="DetailsPanel.Clashes" name="state"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button id="btnViewOps" class="btn btn-primary btn-sm" data-target="#setViewModal" onclick="(function(e){ $(&#39;#btnViewOps&#39;).popover(&#39;show&#39;) })(event)" data-original-title="" title="">
+          Views
+          
+        </button>
+        
+
+        <button id="btnMarkupOps" class="btn btn-primary btn-sm" data-target="#setMarkupModal" onclick="(() =&gt; { $(&#39;#btnMarkupOps&#39;).popover(&#39;show&#39;); refreshViewerApiSettings(); })()" data-original-title="" title="">
+          Markup
+        </button>
+        
+
+        <button id="btnViewerOps" class="btn btn-primary btn-sm" data-target="#setViewerModal" onclick="(() =&gt; { $(&#39;#btnViewerOps&#39;).popover(&#39;show&#39;); refreshViewerApiSettings(); })()" data-original-title="" title="">
+          Viewer
+        </button>
+        
+
+        <button id="btnProjectOps" class="btn btn-primary btn-sm" data-target="#setProjectModal" onclick="(function(e){ $(&#39;#btnProjectOps&#39;).popover(&#39;show&#39;) })(event)" data-original-title="" title="">
+          Project
+        </button>
+        
+
+        <button id="btnUserOps" class="btn btn-primary btn-sm" data-target="#setUserModal" onclick="(function(e){ $(&#39;#btnUserOps&#39;).popover(&#39;show&#39;) })(event)" data-original-title="" title="">
+          User
+        </button>
+        
+
+        <button id="btnGetAPI" class="btn btn-primary btn-sm" title="Show available APIs">
+          API
+        </button>
+        <button id="permissionsButtonOps" class="btn btn-primary btn-sm" data-target="#permissionsModal" onclick="(function(e){ $(&#39;#permissionsButtonOps&#39;).popover(&#39;show&#39;) })(event)" data-original-title="" title="">
+          Permissions
+        </button>
+
+        <button id="btnDataTableOps" class="btn btn-primary btn-sm" data-target="#dataTableModal" onclick="(function(e){ $(&#39;#btnDataTableOps&#39;).popover(&#39;show&#39;) })(event)" data-original-title="" title="">
+          Data Table
+        </button>
+        
+
+        <div><a hidden="" id="toggle" target="_blank">Run as extension</a></div>
+        <div><a href="javascript:configurePanel(&#39;popover&#39;)">Add popover</a></div>
+        <div><a href="javascript:configurePanel(&#39;panel&#39;)">Replace left panel</a> - works in extension mode</div>
+        <div><a href="javascript:configurePanel(&#39;properties&#39;)">Add properties panel</a> - open properties manually</div>
+
+        
+      </div>
+      <div class="row mt-2 mb-3">
+        <div class="col">
+          <label class="form-check-label">Global opacity:&nbsp;&nbsp;&nbsp;</label>
+          <div class="slider slider-horizontal" id=""><div class="slider-track"><div class="slider-track-low" style="left: 0px; width: 0%;"></div><div class="slider-selection" style="left: 0%; width: 100%;"></div><div class="slider-track-high" style="right: 0px; width: 0%;"></div></div><div class="tooltip tooltip-main top" role="presentation" style="left: 100%;"><div class="tooltip-arrow"></div><div class="tooltip-inner">Current opacity: 100</div></div><div class="tooltip tooltip-min top" role="presentation"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div><div class="tooltip tooltip-max top" role="presentation"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div><div class="slider-handle min-slider-handle round" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-valuetext="Current opacity: 100" tabindex="0" style="left: 100%;"></div><div class="slider-handle max-slider-handle round hide" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Current opacity: 0" tabindex="0" style="left: 0%;"></div></div><input id="opacitySlider" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="100" style="display: none;" data-value="100" value="100">
+        </div>
+
+        <div class="col">
+          <input type="checkbox" class="form-check-input" id="colorOnSelection">
+          <label class="form-check-label" for="colorOnSelection">Change color on selection</label>
+        </div>
+
+        <div class="col">
+          <input type="checkbox" class="form-check-input" id="opacityOnSelection">
+          <label class="form-check-label" for="opacityOnSelection">Change opacity on selection</label>
+        </div>
+      </div>
+    </div>
+  
+
+  <iframe hidden="" id="viewerFrame" sandbox="allow-scripts allow-modals allow-forms allow-same-origin allow-popups" width="100%" height="700px" title="3D Viewer Application" src="./Embedded Trimble Connect 3D Viewer Application_files/saved_resource.html">
+  </iframe>
+
+  <script src="./Embedded Trimble Connect 3D Viewer Application_files/index.js.download"></script>
+
+  <script>
+    function getCurrentEnv(){
+      const envMap = {
+        "web.qa": "qa",
+        "web.int": "int",
+        "web.stage": "stage",
+      };
+      let currentEnv = Object.keys(envMap).find(key => window.location.href.indexOf(key) > -1);
+      if(currentEnv){
+        return envMap[currentEnv];
+      }
+      return "stage";
+    };
+  </script>
+
+  <script>
+    ["button", "label", "input", "div", "span", "ul", "li", "table", "textarea", "thead", "tbody", "tr", "td"].forEach(e => $.fn.popover.Constructor.Default.whiteList[e] = [/^.*$/i]);
+    $("#main, .spinner-border").hide();
+
+    var API;
+    const viewer = $("#viewerFrame")[0];
+    let id = 0;
+    if (inIframe()) {
+      viewer.remove();
+      connect(window.parent);
+    } else {
+      $("#embedAccessTokenDiv").show();
+    }
+
+    function doConnect(){
+      if(!inIframe()){
+        const accessToken = $("#accessToken").val();
+        const shareToken = $("#shareToken").val();
+
+        //simple validation
+        if(!accessToken && !shareToken) {
+          setFocus("accessToken");
+          console.log("Enter accessToken or shareToken!");
+          return;
+        }else{
+          unFocus("accessToken");
+        }
+
+        const env = $("#selectEnv").val();
+
+        /* ------ The legacy approach (with full 3DV URL) starts (no need to call embed.init3DViewer)  - depcrecated ----- */
+
+          /*
+          let queryParams = location.search.substr(1);
+          // Removing 'env' query param as we are manually adding it.
+          queryParams = queryParams.split("&").filter(q => !q.startsWith("env=")).join("&");
+          queryParams = queryParams.length > 0 ? `&${queryParams}` : queryParams;
+          let projectId = $("#projectId").val();
+          projectId = !projectId ? "undefined" : projectId;
+          const url = `${window.location.origin}/projects/${projectId}/viewer/3d/?env=${env}${queryParams}`;
+          */
+
+        /* ------ The legacy approach starts ends ------ */
+
+        // The newer approach (just the domain and then call embed.init3DViewer with projectId) - recommended
+        const customURL = $("#embedURL").val();
+        const url = customURL ? customURL : `${window.location.origin}?isEmbedded=true&env=${env}`;
+
+        viewer.src = url;
+        viewer.hidden = false;
+        viewer.onload = () => connect(viewer);
+      }
+    }
+
+    let cameraChanged = () => { };
+
+    function setFocus(id){
+      $(`#${id}`).css("border", "1px solid red");
+      $(`#${id}`).focus();
+    }
+
+    function unFocus(id){
+      $(`#${id}`).css("border", "1px solid #ced4da");
+      $(`#${id}`).focusout();
+    }
+
+    async function connect(target = viewer) {
+
+      console.log("Start listener...");
+
+      API = await TrimbleConnectWorkspace.connect(target, (event, args) => {
+        console.log("Event: ", event, args);
+        switch (event) {
+          case "viewer.onSelectionChanged":
+            onSelection(args.data);
+            break;
+
+          case "viewer.onCameraChanged":
+            onCameraChanged(args.data);
+            break;
+
+          case "project.onChanged":
+            onProjectChanged(args.data.new);
+            break;
+
+          case "project.onSettingsChanged":
+            onProjectSettingsChanged(args.data);
+            break;
+
+          case "user.onSettingsChanged":
+            onUserSettingsChanged(args.data);
+            break;
+
+          case "extension.accessToken":
+            onAccessToken(args.data);
+            break;
+
+          case "extension.closing":
+            console.log("Do clean up");
+            break;
+
+          case "extension.sessionInvalid":
+            console.log("Session is invalid, tokens need refresh.");
+            break;
+
+          case "extension.sessionLogOut":
+            console.log("Session is logged out, tokens need refresh.");
+            break;
+
+          case "extension.broadcast":
+            if (args.action === "viewerCallResult")
+              console.log("Returned from direct extension", args.data);
+            break;
+
+          case "viewer.onSettingsChanged": {
+            refreshViewerApiSettings();
+            break;
+          }
+        }
+      }, 60000);
+
+      if(!inIframe()){
+        let accessToken = $("#accessToken").val();
+        let shareToken = $("#shareToken").val();
+        let refreshToken = $("#refreshToken").val();
+
+        await API.embed.setTokens({accessToken, refreshToken, shareToken});
+
+        /*
+          **** init3DViewer implementations starts ****
+          Note:
+          How to use of embed.init3DViewer?
+          - TCWEB app should embedded just using the base URL (Ex. https://web.connect.trimble.com/?isEmbedded=true)
+          - embed.init3DViewer should be called embed.setTokens promise resolve
+        */
+
+        let projectId = $("#projectId").val();
+        projectId = !projectId ? "undefined" : projectId;
+
+        // Extracting the config object from query params.
+        const whatIsNeed = ["modelId", "versionId", "viewId", "todoId", "clashSetId", "topicId"];
+        const viewerConfig = (location.search.substr(1) + "&").split("&").reduce((config, pair) => {
+          const [name, value] = pair.split("=");
+          if(whatIsNeed.includes(name)){
+            config[name] = value;
+          }
+          return config;
+        }, {projectId});
+
+        await API.embed.init3DViewer({...viewerConfig});
+
+        /* **** init3DViewer implementations ends  **** */
+      }
+
+      $("#embedAccessTokenDiv").hide();
+
+      $("#btnGetAPI").popover({
+        title: "Available APIs",
+        content: renderjson.set_show_to_level(2)(API),
+        html: true,
+      });
+
+      console.log("Listener started!");
+
+      $("#main").show();
+
+      onProjectChanged(await API.project.getProject());
+      onUserChanged(await API.user.getUser());
+      var introEle = $("#instruction");
+      introEle.html("Click on a button below to try out the example API client!");
+      introEle.addClass("blinking");
+      var count = 0;
+      setTimeout(function () {
+        var interval = setInterval(function () {
+          introEle.toggleClass(function () {
+            count++
+            return "blinking"
+          });
+
+          if (count == 2)
+            clearInterval(interval);
+
+        }, 600)
+      }, 1000);
+
+      if (!inIframe()) {
+        const projectId = (await API.project.getProject()).id;
+        var viewerUrl = `../projects/${projectId}/viewer/3d${viewer.contentWindow.location.search}`;
+        const toggle = document.getElementById("toggle");
+        toggle.href = viewerUrl + "&extension=" + location.href.replace(location.search, "");
+        toggle.hidden = false;
+      }
+    }
+
+    $('#opacitySlider').slider({
+      formatter: function (value) {
+        return 'Current opacity: ' + value;
+      }
+    });
+
+    $('#opacitySlider').on("slide", setOpacity);
+
+    $('#btnShowFilteredObjects').popover({
+      html: true,
+      content: $('#showFilteredObjectsModal').html(),
+      trigger: 'manual'
+    });
+
+    $('#tmpObjFilterModalContent').remove();
+
+    $('#btnSetCamera').popover({
+      html: true,
+      content: $('#setCameraModal').html(),
+      trigger: 'manual'
+    });
+
+    $('#tmpCameraModalContent').remove();
+
+    $('#btnModelOps').popover({
+      html: true,
+      content: $('#setModelModal').html(),
+      trigger: 'manual'
+    });
+
+    $('#tmpModelModalContent').remove();
+
+    $('#btnSessionOps').popover({
+      html: true,
+      content: $('#setSessionModal').html(),
+      trigger: 'manual'
+    });
+
+    $('#tmpSessionModalContent').remove();
+
+    $('#btnLayerOps').popover({
+      html: true,
+      content: $('#setLayerModal').html(),
+      trigger: 'manual'
+    });
+
+    $('#tmpLayerModalContent').remove();
+
+    $('#btnViewOps').popover({
+      html: true,
+      content: $('#setViewModal').html(),
+      trigger: 'manual'
+    });
+
+    $('#tmpViewModalContent').remove();
+
+    $('#btnViewerOps').popover({
+      html: true,
+      content: $('#setViewerModal').html(),
+      trigger: 'manual'
+    });
+
+    $('#tmpViewerModalContent').remove();
+
+    $('#btnMarkupOps').popover({
+      html: true,
+      content: $('#setMarkupModal').html(),
+      trigger: 'manual'
+    });
+
+    $('#tmpMarkupModalContent').remove();
+
+    $('#btnProjectOps').popover({
+      html: true,
+      content: $('#setProjectModal').html(),
+      trigger: 'manual'
+    });
+
+    $('#tmpProjectModalContent').remove();
+
+    $('#btnUserOps').popover({
+      html: true,
+      content: $('#setUserModal').html(),
+      trigger: 'manual'
+    });
+
+    $('#tmpUserModalContent').remove();
+
+    $('#btnDirectAPI').popover({
+      html: true,
+      content: $('#setDirectAPIModal').html(),
+      trigger: 'manual'
+    });
+
+    $('#tmpDirectAPIModalContent').remove();
+
+    $('#permissionsButtonOps').popover({
+      html: true,
+      content: $('#permissionsModal').html(),
+      trigger: 'manual'
+    });
+
+    $('#tmpPermissionsModalContent').remove();
+
+    $('#btnDataTableOps').popover({
+      html: true,
+      content: $('#dataTableModal').html(),
+      trigger: 'manual'
+    });
+
+    $('#tmpDataTableModalContent').remove();
+
+    $("html").on("mouseup", function (e) {
+      var l = $(e.target);
+      if (l.closest(".popover").length < 1) {
+        $(".popover").each(function () {
+          $(this).popover("hide");
+        });
+      }
+    });
+
+    const dismissBtn = `<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>`;
+    const str = (msg) => document.createTextNode(msg).data;
+    const ok = (msg) => `<div class="alert alert-success alert-dismissible fade show" role="alert">${str(msg ? msg + ": " : "")} Successful${dismissBtn}</div>`;
+    const warn = (msg) => `<div class="alert alert-warning alert-dismissible fade show" role="alert">${str(msg)}${dismissBtn}</div>`;
+    const err = (err) => `<div class="alert alert-danger alert-dismissible fade show" role="alert">${str(err)}${dismissBtn}</div>`;
+
+    function onSelection(selection) {
+      if (selection && selection.length) {
+        const state = { color: {} };
+        const changeColorOnSelection = $("#colorOnSelection").is(":checked");
+        const opacityOnSelection = $("#opacityOnSelection").is(":checked");
+        if (changeColorOnSelection) Object.assign(state.color, { r: 255, g: 155, b: 15 });
+        if (opacityOnSelection) Object.assign(state.color, { a: 125 });
+        if (changeColorOnSelection || opacityOnSelection) {
+          API.viewer.setObjectState({ selected: true }, state);
+        }
+      }
+
+      var selectionState = document.getElementById("selectionState");
+      let html = "";
+      let oCount = 0, mCount = 0;
+      for (const s of selection) {
+        ++mCount;
+        html += s.objectRuntimeIds.map(id => `<option value='${s.modelId} | ${id}'>${s.modelId} | ${id}</option>`).join();
+        oCount += s.objectRuntimeIds.length;
+      }
+
+      selectionState.innerHTML = selection.length > 0 ?
+        `${oCount} selected from ${mCount} models <button onClick="flyTo()" class="btn btn-info btn-sm">Fly to</button>` : "No selection";
+      $("#selectionList").html(html);
+    }
+
+    async function onCameraChanged(camera) {
+      var l = camera.lookAt;
+      var p = camera.position;
+
+      cameraState.innerHTML =
+        "Position: " + p.x.toFixed(2) + ", " + p.y.toFixed(2) + ", " + p.z.toFixed(2) +
+        "<br/>Look at: " + l.x.toFixed(2) + ", " + l.y.toFixed(2) + ", " + l.z.toFixed(2);
+      cameraChanged(camera);
+    }
+
+    function onProjectChanged(project) {
+      $("#projectData").text(project.name);
+      $("#txtProjectId").val(project.id);
+    }
+
+    function onProjectSettingsChanged(projectSettings) {
+      console.log(`The following project settings changed: ${projectSettings.changes}.`)
+      $.each(projectSettings.changes, function (i, change) {
+        console.log(`Old value for '${change}': ${JSON.stringify(projectSettings.old[change])}`);
+        console.log(`New value for '${change}': ${JSON.stringify(projectSettings.new[change])}`);
+      });
+    }
+
+    function onUserSettingsChanged(userSettings) {
+      console.log(`The following user settings changed: ${userSettings.changes}.`)
+      $.each(userSettings.changes, function (i, change) {
+        console.log(`Old value for '${change}': ${JSON.stringify(userSettings.old[change])}`);
+        console.log(`New value for '${change}': ${JSON.stringify(userSettings.new[change])}`);
+      });
+    }
+
+    function onAccessToken(accessToken) {
+      $("#txtAccessToken").val(accessToken)
+    }
+
+    function onUserChanged(user) {
+      $("#userData").text(user.email);
+    }
+
+    function setProject(e) {
+      if (e && e.keyCode != 13) return;
+      API.project.setProject($("#txtProjectId").val());
+    }
+
+    function setExternalUrl(e) {
+      let val = $("#externalUrlInput").val();
+      if (val && val.length) {
+        if (!["http", "https"].some(l => val.startsWith(l))) {
+          val = `https://${val}`;
+        }
+        $("#externalUrlAnchor").attr("href", val);
+      } else {
+        $("#externalUrlAnchor").attr("href", "https://www.tekla.com");
+      }
+    }
+
+    var seed = 1;
+    function random() {
+      var x = Math.sin(seed++) * 10000;
+      return x - Math.floor(x);
+    }
+
+    var iconId = -1;
+    async function addIcons() {
+      const mult = 25;
+      const pos = { x: 0, y: 0, z: 0 };
+      const icons = [];
+
+      for (let i = iconId; i > iconId - 6; i--) {
+        let icon = {
+          id: i.toString(),
+          iconPath: "/icons/icon_72x72.png",
+          position: { x: random() * mult + pos.x, y: random() * mult + pos.y, z: random() * mult + pos.z },
+          size: 44
+        };
+
+        icons.push(icon);
+      }
+
+      // intentionally decrease id with 5 instead of 6, so when next adding icons, one will be updated.
+      iconId = iconId - 5;
+
+      await API.viewer.addIcon(icons);
+    }
+
+    async function refreshViewerApiSettings() {
+
+      const getValueChangeButton = (settingName) => {
+        switch (settingName) {
+          case "assemblySelection": {
+            return `<button class="btn btn-info btn-sm" onclick="setViewerApiSettings({assemblySelection: true})">Toggle</button>`
+            break;
+          }
+        }
+      }
+
+
+      const settings = await API.viewer.getSettings();
+      let settingsTable = "";
+      Object.keys(settings).forEach(key => {
+        settingsTable += ('<div class="viewer-setting-row">'
+          + `<div class="key">${key}</div>`
+          + `<div class="value">${settings[key]}</div>`
+          + `<div class="value-change">${getValueChangeButton(key)}</div>`
+          + '</div>');
+      });
+      $('#viewer-settings-table').html(settingsTable);
+    }
+
+    async function setViewerApiSettings(update) {
+      const settings = await API.viewer.getSettings();
+      const settingsToupdate = {};
+      if (update.assemblySelection) {
+        settingsToupdate.assemblySelection = !settings.assemblySelection;
+      }
+
+      await API.viewer.setSettings(settingsToupdate);
+      refreshViewerApiSettings();
+    }
+
+    const locationParent = location.href.substring(0, location.href.lastIndexOf("/"));
+
+    function configurePanel(type) {
+      API.extension.configure({
+        type: type,
+        url: locationParent + "/panel.html?" + type,
+        id: "this_is_test_custom_extension",
+      });
+    }
+
+    function directExtensionLoadModel() {
+      API.extension.broadcast({ action: "viewerCall", method: "load", args: ["https://web3d.trimble.com/demo/Full_structural.trb"] });
+    }
+
+    function directExtensionCreateGeometry() {
+      API.extension.broadcast({ action: "createGeometry" });
+    }
+
+    function getIcons() {
+      return doWorkPopover("#btnGetIcons", "Icons", "", async () => {
+        const icons = await API.viewer.getIcon();
+        var html = `<div class="panel panel-primary"><div class="panel-body"><ul class="list-group">`;
+        $.each(icons, function (i, icon) {
+          html += `<li class="list-group-item"><div class="d-flex">
+            <div class="flex-grow-1">
+              <span class="badge badge-secondary p-1 mr-1">id: ${icon.id}</span>
+              <span class="p-2 mr-1">json: ${JSON.stringify(icon)}</span>
+            </div>
+            </div></li>`;
+        });
+        html += "</ul></div></div>";
+        return html;
+      });
+    }
+
+    async function removeIcons() {
+      await API.viewer.removeIcon({ id: -1 });
+      await API.viewer.removeIcon([{ id: -2 }, { id: -3 }]);
+      await API.viewer.removeIcon();
+    }
+
+    async function resetColors(resetSelection) {
+      if (resetSelection) {
+        const selection = await API.viewer.getSelection();
+        const selector = {
+          modelObjectIds: selection
+        }
+        await API.viewer.setObjectState(selector, { color: "reset" });
+      } else {
+        await API.viewer.setObjectState(undefined, { color: "reset" });
+      }
+    }
+
+    async function resetVisibility(resetSelection) {
+      if (resetSelection) {
+        const selection = await API.viewer.getSelection();
+        const selector = {
+          modelObjectIds: selection
+        }
+        await API.viewer.setObjectState(selector, { visible: "reset" });
+      } else {
+        await API.viewer.setObjectState(undefined, { visible: "reset" });
+      }
+    }
+
+    async function doCamera(action) {
+      return doWorkRes("#cameraResult", "#cameraLoading", action);
+    }
+
+    async function getCamera() {
+      return doCamera(async () => renderjson.set_show_to_level("all")(await API.viewer.getCamera()));
+    }
+
+    function setCamera(preset) {
+      return doCamera(async () => API.viewer.setCamera(preset));
+    }
+
+    async function getNewCamera(byQuaternion) {
+      const curCamera = await API.viewer.getCamera();
+      const camera = { ...curCamera };
+      const offset = [...Array(3).keys()].map(_ => (rand(-1, 1) * rand(1, 10)) || 1);
+      if (byQuaternion) {
+        camera.quaternion[Object.keys(camera.quaternion)[rand(0, 3)]] = Math.random() * (Math.random > 0.5 ? 1 : -1) / 10000000;
+      } else {
+        camera.lookAt.x += offset[0];
+        camera.lookAt.y += offset[1];
+        camera.lookAt.z += offset[2];
+      }
+      camera.position.y += offset[0];
+      camera.position.x += offset[1];
+      camera.position.z += offset[2];
+      console.log("Camera: from: ", curCamera, "to: ", camera);
+      return camera;
+    }
+
+    async function moveCameraBackAndForth(byQuaternion) {
+      return doCamera(async () => {
+        const prevCamera = await API.viewer.getCamera();
+        await assertNewCamera(await getNewCamera(byQuaternion));
+        await assertNewCamera(prevCamera);
+      });
+    }
+
+    function flyTo() {
+      API.viewer.setCamera({ selected: true });
+    }
+
+    async function highlightSelected(e) {
+      const v = $(e).val();
+      const selected = v.filter(s => !!s);
+      for (const s of selected) {
+        const [modelId, objectRuntimeId] = s.split(" | ");
+        await API.viewer.setObjectState({
+          modelObjectIds: [{ modelId, objectRuntimeIds: [parseInt(objectRuntimeId, 10)] }]
+        }, {
+          color: { r: 0, g: 0, b: 0 }
+        });
+      }
+    }
+
+    async function doModel(action) {
+      return doWorkRes("#modelsResult", "#modelsLoading", action);
+    }
+
+    async function modelAction(action, e) {
+      const fitToView = $("#fitToView").is(":checked");
+      if (e && e.keyCode != 13) return;
+      let func;
+      const modelId = $("#txtModelId").val()
+      const modelVersionId = $("#txtModelVersionId").val()
+      if (!modelId) {
+        func = async () => { throw new Error("Empty model ID"); };
+      } else {
+        switch (action) {
+          case "load":
+            func = async () => API.viewer.toggleModelVersion({ id: modelId, versionId: modelVersionId }, true, fitToView);
+            break;
+          case "unload":
+            func = async () => API.viewer.toggleModelVersion({ id: modelId, versionId: modelVersionId }, false, fitToView);
+            break;
+          default:
+            func = async () => API.viewer.toggleModelVersion({ id: modelId, versionId: modelVersionId }, undefined, fitToView);
+            break;
+        }
+      }
+
+      return doModel(func);
+    }
+
+    async function getAllModels() {
+      return doModel(async () => renderjson.set_show_to_level("all")(await API.viewer.getModels()));
+    }
+
+    async function showAllModels() {
+      return toggleAllModels(true);
+    }
+
+    async function hideAllModels() {
+      return toggleAllModels(false);
+    }
+
+    async function toggleAllModels(visible) {
+      const fitToView = $("#fitToView").is(":checked");
+      return doModel(async () => {
+        var models = await API.viewer.getModels();
+        await API.viewer.toggleModel(models.map(model => model.id), visible, fitToView);
+      });
+    }
+
+    async function moveAllModels() {
+      var models = await API.viewer.getModels();
+      for (var m of models) {
+        const placement = m.placement || {
+          locationX: 0,
+          locationY: 0,
+          locationZ: 0
+        };
+        if (placement) {
+          if (m.state !== "loaded") {
+            continue;
+          };
+          const x = placement.locationX += rand(-1, 1) * rand(1000, 5000);
+          const y = placement.locationY += rand(-1, 1) * rand(1000, 5000);
+          const z = placement.locationZ += rand(-1, 1) * rand(1000, 5000);
+
+          const axisX = 0;
+          const axisY = 1;
+          const axisZ = 0;
+
+          const refDirectionX = 0.333333;
+          const refDirectionY = 0.333333;
+          const refDirectionZ = 0;
+
+          await API.viewer.placeModel(m.id, {
+            position: {
+              x: x,
+              y: y,
+              z: z
+            },
+            axis: {
+              x: axisX,
+              y: axisY,
+              z: axisZ
+            },
+            refDirection: {
+              x: refDirectionX,
+              y: refDirectionY,
+              z: refDirectionZ
+            }
+          });
+        }
+      }
+    }
+
+    async function layerAction(action, e) {
+      if (e && e.keyCode != 13) return;
+
+      const modelId = $("#txtLayerModelId").val()
+      if (modelId) {
+        switch (action) {
+          case "get":
+            return getLayers(modelId);
+          case "set":
+            return showSetLayersVisibility(modelId);
+        }
+      }
+
+      console.log("Model id was not provided.");
+    }
+
+    function getLayers(modelId) {
+      return doWorkPopover("#btnGetLayers", "Layers", "", async () => {
+        const layers = await API.viewer.getLayers(modelId);
+        var html = `<div class="panel panel-primary"><div class="panel-body"><ul class="list-group">`;
+        $.each(layers, function (i, layer) {
+          html += `<li class="list-group-item"><div class="d-flex">
+            <div class="flex-grow-1">
+              <span class="badge badge-secondary p-1 mr-1">${layer.name}</span>
+              <span class="p-2 mr-1">${JSON.stringify(layer)}</span>
+            </div>
+            </div></li>`;
+        });
+        html += "</ul></div></div>";
+        return html;
+      });
+    }
+
+    function showSetLayersVisibility(modelId) {
+      return doWorkPopover("#btnSetLayers", "Set layers visibility", "", async () => {
+        var html = `<div class="panel panel-primary">
+          <div class="panel-body">
+            <div><textarea id="txtSetLayersVisibility" placeholder="Layers JSON" rows="10" cols="50"></textarea></div>
+            <div>
+              <button id="btnExecuteSetLayersVisibility" class="btn btn-info btn-sm m-1" onClick="setLayersVisibility('${modelId}')">
+                Set
+              </button></div></div>
+            </div>`;
+        return html;
+      });
+    }
+
+    function setLayersVisibility(modelId) {
+      let layers;
+      try {
+        layers = JSON.parse($("#txtSetLayersVisibility").val());
+      } catch (e) {
+        console.log("JSON is not in correct format.");
+      }
+
+      if (layers) {
+        API.viewer.setLayersVisibility(modelId, layers);
+      }
+    }
+
+    async function getViews() {
+      return doWorkPopover("#btnViewToggle", "Views", "#viewLoading", async () => {
+        const views = await API.view.getViews();
+        var html = `<div class="panel panel-primary"><div class="panel-body"><ul class="list-group">`;
+        $.each(views, function (i, v) {
+          html += `<li class="list-group-item"><div class="d-flex">
+<div class="flex-grow-1">
+  <span class="badge badge-secondary p-1 mr-1">${v.id}</span>
+  <button class="btn" onclick="selectView('${v.id}')" name="name" view-id="${v.id}" title="${v.description}">${v.name}</button>
+</div>
+<div>
+  <button class="badge btn btn-outline-info btn-sm ml-2 mr-2" onclick="updateView('${v.id}', event)" title="Edit view name for view with ID ${v.id}">Update Name</button>
+  <button type="button" class="close" aria-label="Close" onclick="deleteView('${v.id}', event)"><span aria-hidden="true">&times;</span></button>
+</div>
+</div></li>`;
+        });
+        html += "</ul></div></div>";
+        return html;
+      });
+    }
+
+    async function createView() {
+      return doWorkPopover("#btnCreateView", "Created View", "#createViewLoading", async () => {
+        let html;
+        const dateTime = getDateStr();
+        const createdView = await API.view.createView({
+          name: name(),
+          description: `A new view was created on ${dateTime} using Workspace API`
+        });
+        html = createdView &&
+          `<div class="container">
+  <div class="row"><img src="${createdView.imageData}" title="Created view thumbnail" class="img-thumbnail" /></div>
+  <div class="row">
+    <table class="table">
+      <tbody>
+        <tr>
+          <td>ID</td>
+          <td>${createdView.id}</td>
+        </tr>
+        <tr>
+          <td>Name</td>
+          <td>${createdView.name}</td>
+        </tr>
+        <tr>
+          <td>Description</td>
+          <td>${createdView.description}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>`;
+        return html;
+      });
+    }
+
+    async function doView(action) {
+      return doWorkRes("#viewsResult", "#viewsLoading", action);
+    }
+
+    async function setView() {
+      return doView(async () => {
+        const curCamera = await API.viewer.getCamera();
+        const camera = await getNewCamera();
+        const sectionPlanes = [{
+          directionX: 1,
+          directionY: 0,
+          directionZ: 0,
+          positionX: curCamera.position.x * 1000 / 2,
+          positionY: curCamera.position.y * 1000 / 2,
+          positionZ: curCamera.position.z * 1000 / 2,
+        }];
+        return API.view.setView({ camera, sectionPlanes });
+      });
+    }
+
+    async function getView(e) {
+      if (e && e.keyCode != 13) return;
+      return doView(async () => {
+        const id = $("#txtViewId").val();
+        return renderjson.set_show_to_level("all")(await API.view.getView(id));
+      });
+    }
+
+    async function selectView(id) {
+      await API.view.selectView(id);
+    }
+
+    async function updateView(id, e) {
+      const view = await API.view.getView(id);
+      view.name = name();
+      if (await API.view.updateView(view)) {
+        $(`button[view-id='${id}'][name='name']`).text(view.name);
+      }
+    }
+
+    async function deleteView(id, e) {
+      if (await API.view.deleteView(id)) {
+        $(e.target).closest("li").remove();
+      }
+    }
+
+    async function getFilteredObjects() {
+      $("#objectsLoading").hide();
+      $("#objectsResult").html("");
+      $('#btnShowFilteredObjects').popover('show');
+    }
+
+    async function getObjectsBy(action, e) {
+      if (e && e.keyCode != 13) return;
+      return doObjectsFilter(async () => {
+        let result = await action();
+        result = result && result.length
+          ? renderjson.set_show_to_level(2)(result)
+          : warn("Could not find any object. Make sure that the models are loaded and double-check the query!");
+        return result;
+      });
+    }
+
+    async function doObjectsFilter(action) {
+      return doWorkRes("#objectsResult", "#objectsLoading", action);
+    }
+
+    function getSelectionSelector() {
+      return { selected: true };
+    }
+
+    async function getAllObjects(e) {
+      return getObjectsBy(async () => API.viewer.getObjects(), e);
+    }
+
+    async function getVisibleObjects(e) {
+      return getObjectsBy(async () => API.viewer.getObjects(undefined, { visible: true }), e);
+    }
+
+    async function getColoredObjects(e) {
+      return getObjectsBy(async () => API.viewer.getColoredObjects());
+    }
+
+    async function getAllExternalIds(e) {
+      return getObjectsBy(async () => {
+        const objs = await API.viewer.getObjects();
+        for (const mid of objs) {
+          const runtimeIds = mid.objects.map(o => o.id);
+          mid.externalIds = await API.viewer.convertToObjectIds(mid.modelId, runtimeIds);
+          if (runtimeIds.length !== mid.externalIds.length) {
+            mid["FAILED"] = "FAILED: Cannot resolve all external IDs";
+          }
+        }
+
+        return objs;
+      }, e);
+    }
+
+    function toSelector(modelObjects) {
+      return { modelObjectIds: modelObjects.map(m => ({ modelId: m.modelId, objectRuntimeIds: m.objects.map(o => o.id).sort() })).sort((a, b) => a < b ? -1 : a > b ? 1 : 0) };
+    }
+
+    function half(target) {
+      return target.splice(0, Math.ceil(target.length / 2));
+    }
+
+    async function getHalfObjects() {
+      return (await API.viewer.getObjects()).map(m => ({ modelId: m.modelId, objects: half(m.objects) }));
+    }
+
+    async function selectHalf(selected, e) {
+      return getObjectsBy(async () => {
+        const mids = [];
+        const selector = toSelector(await getHalfObjects());
+        await API.viewer.setSelection(selector, selected ? "set" : "remove");
+        const actualSelection = toSelector(await API.viewer.getObjects({ selected: true }));
+        let err;
+        if (selected) {
+          err = JSON.stringify(selector) != JSON.stringify(actualSelection) && "FAILED: The selected objects are not the same as specified in the selector";
+        } else {
+          for (const sel of actualSelection.modelObjectIds) {
+            const match = selector.modelObjectIds.find(m => m.modelId === sel.modelId);
+            if (!match) { continue; }
+            for (const o of match.objects) {
+              if (sel.objects.find(i => i.id === o.id)) {
+                err = "FAILED: The objects are not unselected as specified in the selector";
+                break;
+              }
+            }
+
+            if (err) {
+              break;
+            }
+          }
+        }
+
+        return [{ selector, status: err || "PASSED", actualSelection }];
+      }, e);
+    }
+
+    async function setHalfVisible(visible, e) {
+      return doObjectsFilter(async () => {
+        const mids = [];
+        const selector = toSelector(await getHalfObjects());
+        await API.viewer.setObjectState(selector, { visible });
+      }, e);
+    }
+
+    async function getObjectsBySelection(e) {
+      return getObjectsBy(async () => API.viewer.getObjects(getSelectionSelector()), e);
+    }
+
+    async function setCameraBySelection(e) {
+      return doObjectsFilter(async () => API.viewer.setCamera(getSelectionSelector()));
+    }
+
+    async function getSelection(e) {
+      return getObjectsBy(async () => API.viewer.getSelection(), e);
+    }
+
+    function getClassSelector() {
+      return {
+        parameter: {
+          class: $("#classFilter").val()
+        }
+      };
+    }
+
+    async function getObjectsByClass(e) {
+      return getObjectsBy(async () => API.viewer.getObjects(getClassSelector()), e);
+    }
+
+    async function setObjectsByClass(e) {
+      return doObjectsFilter(async () => API.viewer.setSelection(getClassSelector(), "set"));
+    }
+
+    async function setCameraByClass() {
+      return doObjectsFilter(async () => API.viewer.setCamera(getClassSelector()));
+    }
+
+    function getPropSelector() {
+      return {
+        parameter: {
+          properties: {
+            [$("#propNameFilter").val()]: $("#propValueFilter").val()
+          }
+        }
+      };
+    }
+
+    async function getObjectsByProp(e) {
+      return getObjectsBy(async () => API.viewer.getObjects(getPropSelector()), e);
+    }
+
+    async function setObjectsByProp(e) {
+      return doObjectsFilter(async () => API.viewer.setSelection(getPropSelector(), "set"));
+    }
+
+    async function setCameraByProp() {
+      return doObjectsFilter(async () => API.viewer.setCamera(getPropSelector()));
+    }
+
+    async function updateUIStates() {
+      const ui = await API.ui.getUI();
+      $("input[element-name]").each(function (i, e) {
+        const ele = $(e).attr("element-name");
+        const state = ui.find(u => u.name === ele);
+        $(`*[element-name="${ele}"][name$="state"]`).text(`(Current state: ${state ? state.state : "FAILED"})`);
+      });
+    }
+
+    async function setUIModal() {
+      return doWorkPopover("#btnSetUI", "UI Control", "", async () => {
+        await updateUIStates();
+        return $('#setUIModal').html();
+      });
+    }
+
+    async function toViewerWith(action) {
+      return doWorkRes("#viewerResult", "#viewerLoading", action);
+    }
+
+    function getAccessToken() {
+      toViewerWith(async () => {
+        const token = await API.extension.requestPermission("accesstoken");
+        $("#txtAccessToken").val(token)
+        return token;
+      });
+    }
+
+    function setAccessToken() {
+      toViewerWith(async () => {
+        await API.viewer.setAccessTokens($("#txtAccessToken").val());
+      });
+    }
+
+    async function loadTrimbim(e) {
+      toViewerWith(async () => {
+        let file;
+        if (e) {
+          files = e.files;
+        } else {
+          var f = document.getElementById("txtFileId");
+          files = f.files;
+        }
+        let trbModels = [];
+        for (const file of files) {
+          const blob = await getBlob(file);
+          const name = file.name.substring(0, file.name.lastIndexOf('.'));
+          const placement = {
+            locationX: 0,
+            locationY: 0,
+            locationZ: 0
+          };
+          const locX = placement.locationX += rand(-1, 1) * rand(1000, 5000);
+          const locY = placement.locationY += rand(-1, 1) * rand(1000, 5000);
+          const locZ = placement.locationZ += rand(-1, 1) * rand(1000, 5000);
+          trbModels.push({
+            id: name, trbBlob: blob, fitToView: true, placement: {
+              position: {
+                x: locX,
+                y: locY,
+                z: locZ
+              }
+            }
+          });
+        }
+        return API.viewer.addTrimbimModel(trbModels);
+      });
+    }
+
+    async function getLoadedTrimbims() {
+      return doWorkPopover("#btnGetTrimbims", "TrbModels", "", async () => {
+        const trbs = await API.viewer.getTrimbimModels();
+        var html = `<div class="panel panel-primary"><div class="panel-body"><ul class="list-group">`;
+        $.each(trbs, function (i, trb) {
+          html += `<li class="list-group-item"><div class="d-flex">
+            <div class="flex-grow-1">
+              <span class="badge badge-secondary p-1 mr-1">id: ${trb.id}</span>
+              <span class="p-2 mr-1">json: ${JSON.stringify(trb)}</span>
+            </div>
+            </div></li>`;
+        });
+        html += "</ul></div></div>";
+        return html;
+      });
+    }
+
+    async function UnloadTrimbim() {
+      toViewerWith(async () => {
+        const trbId = $("#txtTrbId").val();
+        await API.viewer.removeTrimbimModel(trbId);
+      });
+    }
+
+    async function hideTrimbim() {
+      toViewerWith(async () => {
+        const trbId = $("#txtTrbId").val();
+        await API.viewer.addTrimbimModel({ id: trbId, visible: false });
+      });
+    }
+
+    async function unhideTrimbim() {
+      toViewerWith(async () => {
+        const trbId = $("#txtTrbId").val();
+        await API.viewer.addTrimbimModel({ id: trbId, visible: true });
+      });
+    }
+
+    async function moveTrimbim() {
+      toViewerWith(async () => {
+        const placement = {
+          locationX: 0,
+          locationY: 0,
+          locationZ: 0
+        };
+        const locX = placement.locationX += rand(-1, 1) * rand(1000, 5000);
+        const locY = placement.locationY += rand(-1, 1) * rand(1000, 5000);
+        const locZ = placement.locationZ += rand(-1, 1) * rand(1000, 5000);
+
+        const axisX = 0;
+        const axisY = 1;
+        const axisZ = 0;
+
+        const refDirectionX = 0.333333;
+        const refDirectionY = 0.333333;
+        const refDirectionZ = 0;
+
+        const trbId = $("#txtTrbId").val();
+        await API.viewer.addTrimbimModel({
+          id: trbId, placement: {
+            position: {
+              x: locX,
+              y: locY,
+              z: locZ
+            },
+            axis: {
+              x: axisX,
+              y: axisY,
+              z: axisZ
+            },
+            refDirection: {
+              x: refDirectionX,
+              y: refDirectionY,
+              z: refDirectionZ
+            }
+          }
+        });
+      });
+    }
+
+    function getBlob(file) {
+      return new Promise((resolve, reject) => {
+        var reader = new FileReader();
+        reader.onload = (e) => {
+          const blob = new Blob([new Uint8Array(e.target.result)], { type: file.type });
+          resolve(blob);
+        }
+        reader.onerror = () => reject("Error loading " + filePath);
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
+    async function getViewSnapshot() {
+      return doWorkPopover("#btnGetViewSnapshot", "View Snapshot", "#getViewSnapshotLoading", async () =>
+        `<div class="container"><img src="${await API.viewer.getSnapshot()}" title="View snapshot" class="img-thumbnail" /></div>`);
+    }
+
+    function showAddSectionPlanesForm() {
+      return doWorkPopover("#btnAddClipPlanes", "Add section planes", "", async () => {
+        var html = `<div class="panel panel-primary">
+          <div class="panel-body">
+            <div><textarea id="txtAddSectionPlanes" placeholder="Section planes JSON" rows="10" cols="50"></textarea></div>
+            <div>
+              <button id="btnExecuteAddClipPlanes" class="btn btn-info btn-sm m-1" onClick="addSectionPlanes()">
+                Add
+              </button></div></div>
+            </div>`;
+        return html;
+      });
+    }
+
+    function addSectionPlanes() {
+      let sectionPlanes;
+      try {
+        sectionPlanes = JSON.parse($("#txtAddSectionPlanes").val());
+      } catch (e) {
+        console.log("JSON is not in correct format.");
+      }
+
+      if (sectionPlanes) {
+        API.viewer.addSectionPlane(sectionPlanes);
+      }
+    }
+
+    function getSectionPlanes() {
+      return doWorkPopover("#btnGetClipPlanes", "Section planes", "", async () => {
+        const sectionPlanes = await API.viewer.getSectionPlanes();
+        var html = `<div class="panel panel-primary"><div class="panel-body"><ul class="list-group">`;
+        $.each(sectionPlanes, function (i, s) {
+          html += `<li class="list-group-item"><div class="d-flex">
+            <div class="flex-grow-1">
+              <span class="badge badge-secondary p-1 mr-1">id: ${s.id}</span>
+              <span class="p-2 mr-1">json: ${JSON.stringify(s)}</span>
+            </div>
+            </div></li>`;
+        });
+        html += "</ul></div></div>";
+        return html;
+      });
+    }
+
+    function clearSectionPlanes() {
+      API.viewer.removeSectionPlanes();
+    }
+
+    async function setUI(e) {
+      if (!e) return;
+      const ele = $(e.target);
+      const target = ele.attr("element-name");
+      if (!target) return;
+      const state = ele.is(":checked") ? ele.attr("selected-state") : ele.attr("deselected-state")
+      console.log("Set UI Element: ", target, " - state: ", state);
+      await API.ui.setUI({
+        name: target,
+        state: state
+      });
+      await updateUIStates();
+    }
+
+    async function setOpacity(e) {
+      await API.viewer.setOpacity(e.value);
+    }
+
+    function getProjectSettings() {
+      return doWorkPopover("#btnGetProjectSettings", "Project settings", "", async () => {
+        const projectSettings = await API.project.getSettings();
+        var html = `<div class="panel panel-primary"><div class="panel-body"><ul class="list-group">`;
+        for (const key in projectSettings) {
+          html += `<li class="list-group-item"><div class="d-flex">
+            <div class="flex-grow-1">
+              <span class="badge badge-secondary p-1 mr-1">${key}</span>
+              <span class="p-2 mr-1">${JSON.stringify(projectSettings[key])}</span>
+            </div>
+            </div></li>`;
+        }
+        html += "</ul></div></div>";
+        return html;
+      });
+    }
+
+    function getUserSettings() {
+      return doWorkPopover("#btnGetUserSettings", "User settings", "", async () => {
+        const userSettings = await API.user.getSettings();
+        var html = `<div class="panel panel-primary"><div class="panel-body"><ul class="list-group">`;
+        for (const key in userSettings) {
+          html += `<li class="list-group-item"><div class="d-flex">
+            <div class="flex-grow-1">
+              <span class="badge badge-secondary p-1 mr-1">${key}</span>
+              <span class="p-2 mr-1">${JSON.stringify(userSettings[key])}</span>
+            </div>
+            </div></li>`;
+        }
+        html += "</ul></div></div>";
+        return html;
+      });
+    }
+
+    function getDataTableConfig() {
+      return doWorkPopover("#btnGetDataTableConfig", "Data Table config", "", async () => {
+        const dtConfig = await API.dataTable.getConfig();
+        var html = `<div class="panel panel-primary"><div class="panel-body"><ul class="list-group">`;
+        for (const key in dtConfig) {
+          html += `<li class="list-group-item"><div class="d-flex">
+            <div class="flex-grow-1">
+              <span class="badge badge-secondary p-1 mr-1">${key}</span>
+              <span class="p-2 mr-1">${JSON.stringify(dtConfig[key])}</span>
+            </div>
+            </div></li>`;
+        }
+        html += "</ul></div></div>";
+        return html;
+      });
+    }
+
+    async function showDataTable() {
+      $("#dataTableModal button").prop("disabled", true);
+      await API.dataTable.setConfig({ show: true });
+      $("#dataTableModal button").prop("disabled", false);
+    }
+
+    async function hideDataTable() {
+      $("#btnHideDataTable").prop("disabled", true);
+      await API.dataTable.setConfig({ show: false });
+      $("#btnHideDataTable").prop("disabled", false);
+    }
+
+    async function setDataTableMode(btnIdPostfix) {
+      $("#btnDataTableMode" + btnIdPostfix).prop("disabled", true);
+      await API.dataTable.setConfig({ mode: btnIdPostfix.toLowerCase() });
+      $("#btnDataTableMode" + btnIdPostfix).prop("disabled", false);
+    }
+
+    async function setDataTableFilter(filter) {
+      $("#btnDataTableFilter").prop("disabled", true);
+      $("#txtDataTableFilter").prop("disabled", true);
+      await API.dataTable.setConfig({ filter: document.getElementById("txtDataTableFilter").value });
+      $("#btnDataTableFilter").prop("disabled", false);
+      $("#txtDataTableFilter").prop("disabled", false);
+    }
+
+    function showAddMeasurementsForm() {
+      return doWorkPopover("#btnAddCustomMeasurements", "Add custom measurements", "", async () => {
+        var html = `<div class="panel panel-primary">
+          <div class="panel-body">
+            <div><textarea id="txtCustomMeasurements" placeholder="Custom measurements JSON array" rows="10" cols="50"></textarea></div>
+            <div>
+              <button id="executeAddCustomMeasurements" class="btn btn-info btn-sm m-1" onClick="addMeasurementMarkups()">
+                Add
+              </button></div></div>
+            </div>`;
+        return html;
+      }, true);
+    }
+
+    function showGetMeasurementsForm() {
+      return doWorkPopover("#btnShowCustomMeasurements", "Get measurement markups", "", async () => {
+        var html = `<div class="panel panel-primary">
+          <div class="panel-body">
+            <div><textarea readonly id="txtShowCustomMeasurements" placeholder="Custom measurements JSON" rows="10" cols="50"></textarea></div>
+            <div>
+              <button id="executeGetCustomMeasurements" class="btn btn-info btn-sm m-1" onClick="getMeasurementMarkups()">
+                Get measurements
+              </button></div></div>
+            </div>`;
+        return html;
+      }, true);
+    }
+
+    function showAddLineMarkupsForm() {
+      return doWorkPopover("#btnAddLineMarkups", "Add custom line markups", "", async () => {
+        var html = `<div class="panel panel-primary">
+          <div class="panel-body">
+            <div><textarea id="txtLineMarkups" placeholder="Custom Line markups JSON array" rows="10" cols="50"></textarea></div>
+            <div>
+              <button id="executeAddLineMarkups" class="btn btn-info btn-sm m-1" onClick="addLineMarkups()">
+                Add
+              </button></div></div>
+            </div>`;
+        return html;
+      }, true);
+    }
+
+    function showAddArrowMarkupsForm() {
+      return doWorkPopover("#btnAddArrowMarkups", "Add custom Arrow markups", "", async () => {
+        var html = `<div class="panel panel-primary">
+          <div class="panel-body">
+            <div><textarea id="txtArrowMarkups" placeholder="Custom Arrow markups JSON array" rows="10" cols="50"></textarea></div>
+            <div>
+              <button id="executeAddArrowMarkups" class="btn btn-info btn-sm m-1" onClick="addArrowMarkups()">
+                Add
+              </button></div></div>
+            </div>`;
+        return html;
+      }, true);
+    }
+
+    function showGetArrowMarkupsForm() {
+      return doWorkPopover("#btnShowArrowMarkups", "Get arrow markups", "", async () => {
+        var html = `<div class="panel panel-primary">
+          <div class="panel-body">
+            <div><textarea readonly id="txtShowArrowMarkups" placeholder="Arrow markups JSON" rows="10" cols="50"></textarea></div>
+            <div>
+              <button id="executeGetArrowMarkups" class="btn btn-info btn-sm m-1" onClick="getArrowMarkups()">
+                Get arrow markups
+              </button>
+            </div>
+          </div>
+        </div>`;
+        return html;
+      }, true);
+    }
+
+    function showGetLineMarkupsForm() {
+      return doWorkPopover("#btnShowLineMarkups", "Get line markups", "", async () => {
+        var html = `<div class="panel panel-primary">
+          <div class="panel-body">
+            <div><textarea readonly id="txtShowLineMarkups" placeholder="Line markups JSON" rows="10" cols="50"></textarea></div>
+            <div>
+              <button id="executeGetLineMarkups" class="btn btn-info btn-sm m-1" onClick="getLineMarkups()">
+                Get line markups
+              </button>
+            </div>
+          </div>
+        </div>`;
+        return html;
+      }, true);
+    }
+
+    function showAddTextMarkupsForm() {
+      return doWorkPopover("#btnAddTextMarkups", "Add custom text markups", "", async () => {
+        var html = `<div class="panel panel-primary">
+          <div class="panel-body">
+            <div><textarea id="txtTextMarkups" placeholder="Custom text markups JSON array" rows="10" cols="50"></textarea></div>
+            <div>
+              <button id="executeAddTextMarkups" class="btn btn-info btn-sm m-1" onClick="addTextMarkups()">
+                Add
+              </button></div></div>
+            </div>`;
+        return html;
+      }, true);
+    }
+
+    function showGetTextMarkupsForm() {
+      return doWorkPopover("#btnShowTextMarkups", "Get text markups", "", async () => {
+        var html = `<div class="panel panel-primary">
+          <div class="panel-body">
+            <div><textarea readonly id="txtShowTextMarkups" placeholder="Text markups JSON" rows="10" cols="50"></textarea></div>
+            <div>
+              <button id="executeGetTextMarkups" class="btn btn-info btn-sm m-1" onClick="getTextMarkups()">
+                Get text markups
+              </button>
+            </div>
+          </div>
+        </div>`;
+        return html;
+      }, true);
+    }
+
+    function showAddCloudMarkupsForm() {
+      return doWorkPopover("#btnAddCloudMarkups", "Add custom cloud markups", "", async () => {
+        var html = `<div class="panel panel-primary">
+          <div class="panel-body">
+            <div><textarea id="txtCloudMarkups" placeholder="Custom cloud markups JSON array" rows="10" cols="50"></textarea></div>
+            <div>
+              <button id="executeAddCloudMarkups" class="btn btn-info btn-sm m-1" onClick="addCloudMarkups()">
+                Add
+              </button></div></div>
+            </div>`;
+        return html;
+      }, true);
+    }
+
+    function showGetCloudMarkupsForm() {
+      return doWorkPopover("#btnShowCloudMarkups", "Get cloud markups", "", async () => {
+        var html = `<div class="panel panel-primary">
+          <div class="panel-body">
+            <div><textarea readonly id="txtShowCloudMarkups" placeholder="Cloud markups JSON" rows="10" cols="50"></textarea></div>
+            <div>
+              <button id="executeGetCloudMarkups" class="btn btn-info btn-sm m-1" onClick="getCloudMarkups()">
+                Get cloud markups
+              </button>
+            </div>
+          </div>
+        </div>`;
+        return html;
+      }, true);
+    }
+
+    function showRemoveMeasurementsForm() {
+      return doWorkPopover("#btnShowRemoveCustomMeasurement", "Remove measurement by id", "", async () => {
+        var html = `<div class="panel panel-primary">
+          <div class="panel-body">
+            <div><input style="width:100%" id="txtRemoveCustomMeasurement" placeholder="Measurement Ids (Comma-separated e.g 1337,1338)"></input></div>
+            <div>
+              <button id="executeRemoveCustomMeasurement" class="btn btn-info btn-sm m-1" onClick="removeMeasurementMarkup()">
+                Remove
+              </button></div></div>
+            </div>`;
+        return html;
+      }, true);
+    }
+
+    async function getMeasurementMarkups() {
+      const measurements = await API.markup.getMeasurementMarkups();
+      console.log("measurement markups ", measurements.length);
+      const jsonMeasurements = JSON.stringify(measurements, null, 4);
+      $("#txtShowCustomMeasurements").val(jsonMeasurements);
+    }
+
+    async function addArrowMarkups() {
+      const arrowMarkups = JSON.parse($("#txtArrowMarkups").val());
+      const markups = await API.markup.addArrowMarkups(arrowMarkups);
+      console.log("Added arrow markups: ", markups);
+    }
+
+    async function getArrowMarkups() {
+      const arrowMarkups = await API.markup.getArrowMarkups();
+      console.log("arrow markups ", arrowMarkups.length);
+      const jsonArrowMarkups = JSON.stringify(arrowMarkups, null, 4);
+      $("#txtShowArrowMarkups").val(jsonArrowMarkups);
+    }
+
+    async function addLineMarkups() {
+      const lineMarkups = JSON.parse($("#txtLineMarkups").val());
+      const markups = await API.markup.addLineMarkups(lineMarkups);
+      console.log("Added line markups: ", markups);
+    }
+
+    async function getLineMarkups() {
+      const lineMarkups = await API.markup.getLineMarkups();
+      console.log("line markups ", lineMarkups.length);
+      const jsonLineMarkups = JSON.stringify(lineMarkups, null, 4);
+      $("#txtShowLineMarkups").val(jsonLineMarkups);
+    }
+
+    async function addTextMarkups() {
+      const textMarkups = JSON.parse($("#txtTextMarkups").val());
+      const markups = await API.markup.addTextMarkup(textMarkups);
+      console.log("Added text markups: ", markups);
+    }
+
+    async function getTextMarkups() {
+      const textMarkups = await API.markup.getTextMarkups();
+      console.log("text markups ", textMarkups.length);
+      const jsonTextMarkups = JSON.stringify(textMarkups, null, 4);
+      $("#txtShowTextMarkups").val(jsonTextMarkups);
+    }
+
+    async function addCloudMarkups() {
+      const cloudMarkups = JSON.parse($("#txtCloudMarkups").val());
+      const markups = await API.markup.addCloudMarkup(cloudMarkups);
+      console.log("Added cloud markups: ", markups);
+    }
+
+    async function getCloudMarkups() {
+      const cloudMarkups = await API.markup.getCloudMarkups();
+      console.log("cloud markups ", cloudMarkups.length);
+      const jsonCloudMarkups = JSON.stringify(cloudMarkups, null, 4);
+      $("#txtShowCloudMarkups").val(jsonCloudMarkups);
+    }
+
+    async function addMeasurementMarkups() {
+      const measurements = JSON.parse($("#txtCustomMeasurements").val());
+      API.markup.addMeasurementMarkups(measurements).then(res => {
+        console.log(res);
+      });
+    }
+
+    async function removeMarkups() {
+      await API.markup.removeMarkups();
+    }
+
+    async function removeMeasurementMarkup() {
+      const value = $("#txtRemoveCustomMeasurement").val();
+      const values = value.split(",");
+      const ids = values.map(v => parseInt(v, 10));
+      await API.markup.removeMarkups(ids);
+      $("#txtRemoveCustomMeasurement").val("");
+    }
+
+    async function doWorkSafe(preAction, action, postAction) {
+      preAction();
+      let result;
+      try {
+        const actionRes = await action();
+        if (actionRes === false) {
+          throw new Error("Operation failed: Unknown error");
+        } else if (actionRes === true || actionRes === "" || actionRes == null) {
+          result = ok();
+        } else {
+          result = actionRes;
+        }
+      }
+      catch (e) {
+        result = err(e);
+      }
+      postAction(result)
+    }
+
+    async function doWorkPopover(selPopover, title, selLoading, action, showCloseButton) {
+      if (showCloseButton) {
+        setTimeout(() => {
+          $(`${selPopover}-close-popover`).one('click', () => $(selPopover).popover("hide"));
+        });
+      }
+
+      return doWorkSafe(() => {
+        $(selLoading).show();
+        $(selPopover).popover("dispose");
+      }, action, r => {
+        $(selPopover).popover({
+          title: !showCloseButton ? title : `<div class="popover-title-row">
+                                              <div class="popover-title-container">${title}</div>
+                                              <div class="close-popover-button" id="${selPopover.replace("#", "")}-close-popover">X</div>
+                                            </div>` ,
+          content: r,
+          html: true,
+          trigger: "manual",
+          placement: "bottom"
+        });
+        $(selPopover).popover("show");
+        $(selLoading).hide();
+      });
+    }
+
+    async function doWorkRes(selResult, selLoading, action) {
+      return doWorkSafe(() => {
+        $(selResult).html("");
+        $(selLoading).show();
+      }, action, r => {
+        $(selLoading).hide();
+        $(selResult).html(r);
+      });
+    }
+
+    // from https://css-tricks.com/snippets/javascript/get-url-variables/
+    function getQueryVariable(variable) {
+      var query = window.location.search.substring(1);
+      var vars = query.split("&");
+      for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        if (pair[0] == variable) {
+          return decodeURIComponent(pair[1]);
+        }
+      }
+    }
+
+    function rand(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
+    }
+
+    function inIframe() {
+      try {
+        return window.self !== window.top;
+      } catch (e) {
+        return true;
+      }
+    }
+
+    const nouns = ["bird", "clock", "plastic", "duck", "developer"];
+    const verbs = ["coded", "sunk", "broke", "flew", "jumped"];
+    const adjectives = ["beautiful", "professional", "lovely", "dumb", "rough"];
+    const adverbs = ["slowly", "elegantly", "precisely", "quickly", "sadly"];
+    const preposition = ["down", "into", "up", "on", "upon"];
+    function randGen() { return Math.floor(Math.random() * 5); }
+    function name() {
+      var rand1 = randGen();
+      var rand2 = randGen();
+      var rand3 = randGen();
+      var rand4 = randGen();
+      var rand5 = randGen();
+      var rand6 = randGen();
+      return `The ${adjectives[rand1]} ${nouns[rand2]} ${adverbs[rand3]} ${verbs[rand4]} on ${getDateStr()}`;
+    }
+
+    function getDateStr() {
+      var today = new Date();
+      var date = "" + today.getFullYear() + (today.getMonth() + 1) + today.getDate();
+      var time = "" + today.getHours() + today.getMinutes() + today.getSeconds();
+      return date + ' ' + time;
+    }
+
+    async function withTimeOut(timeOutInMilliseconds, action, rejectOnTimeOut) {
+      const timeOutPromise = new Promise((resolve, reject) => {
+        const wait = setTimeout(() => {
+          clearTimeout(wait);
+          (rejectOnTimeOut === false ? resolve : reject)("Timed Out");
+        }, timeOutInMilliseconds);
+      });
+      return Promise.race([timeOutPromise, action]);
+    }
+
+    async function assertNewCamera(camera) {
+      return withTimeOut(
+        5 * 60 * 1000,
+        new Promise(r => { cameraChanged = r; API.viewer.setCamera(camera); })
+          .then(r => console.log("setCamera: ", r)));
+    }
+  </script>
+
+
+
+</body></html>

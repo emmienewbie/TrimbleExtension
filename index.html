@@ -5,7 +5,6 @@
 <head>
   <title>Embedded Trimble Connect 3D Viewer Application</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="icon" href="%BASE_URL%icons/favicon.ico">
   <link crossorigin rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T">
   <link crossorigin rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.2/css/bootstrap-slider.min.css" integrity="sha256-G3IAYJYIQvZgPksNQDbjvxd/Ca1SfCDFwu2s2lt0oGo=">
@@ -100,9 +99,15 @@
 <body>
     <div class="container plugin-example-container">
       <h1 class="display-5">Trimble Connect 3D Viewer - Workspace API Example</h1>
+      <div id="statusMessage" class="alert alert-info mt-3" role="alert">
+        Waiting for Trimble Connect connection.
+      </div>
       <hr/>
-      <div class="row" id="embedAccessTokenDiv" style="display:none">
+      <div class="row" id="embedAccessTokenDiv">
         <div class="col-md-12">
+          <p class="text-muted">
+            This sample does not load a 3D model by itself on a static published page. Enter a Trimble access token or share token, then click Load 3DViewer.
+          </p>
           <div class="my-3 row mb-3">
             <label for="selectEnv" class="col-sm-2 col-form-label">Environment</label>
             <div class="col-sm-4">
@@ -858,11 +863,21 @@
     var API;
     const viewer = $("#viewerFrame")[0];
     let id = 0;
+    setStatus("Standalone mode detected. Enter tokens and click Load 3DViewer.", "info");
     if (inIframe()) {
       viewer.remove();
+      setStatus("Embedded mode detected. Connecting to Trimble Connect...", "info");
       connect(window.parent);
     } else {
       $("#embedAccessTokenDiv").show();
+    }
+
+    function setStatus(message, type = "info") {
+      const status = $("#statusMessage");
+      status.removeClass("alert-info alert-success alert-warning alert-danger");
+      status.addClass(`alert-${type}`);
+      status.text(message);
+      status.show();
     }
 
     function doConnect(){
@@ -921,63 +936,76 @@
 
       console.log("Start listener...");
 
-      API = await TrimbleConnectWorkspace.connect(target, (event, args) => {
-        console.log("Event: ", event, args);
-        switch (event) {
-          case "viewer.onSelectionChanged":
-            onSelection(args.data);
-            break;
+      try {
+        API = await TrimbleConnectWorkspace.connect(target, (event, args) => {
+          console.log("Event: ", event, args);
+          switch (event) {
+            case "viewer.onSelectionChanged":
+              onSelection(args.data);
+              break;
 
-          case "viewer.onCameraChanged":
-            onCameraChanged(args.data);
-            break;
+            case "viewer.onCameraChanged":
+              onCameraChanged(args.data);
+              break;
 
-          case "project.onChanged":
-            onProjectChanged(args.data.new);
-            break;
+            case "project.onChanged":
+              onProjectChanged(args.data.new);
+              break;
 
-          case "project.onSettingsChanged":
-            onProjectSettingsChanged(args.data);
-            break;
+            case "project.onSettingsChanged":
+              onProjectSettingsChanged(args.data);
+              break;
 
-          case "user.onSettingsChanged":
-            onUserSettingsChanged(args.data);
-            break;
+            case "user.onSettingsChanged":
+              onUserSettingsChanged(args.data);
+              break;
 
-          case "extension.accessToken":
-            onAccessToken(args.data);
-            break;
+            case "extension.accessToken":
+              onAccessToken(args.data);
+              break;
 
-          case "extension.closing":
-            console.log("Do clean up");
-            break;
+            case "extension.closing":
+              console.log("Do clean up");
+              break;
 
-          case "extension.sessionInvalid":
-            console.log("Session is invalid, tokens need refresh.");
-            break;
+            case "extension.sessionInvalid":
+              setStatus("Trimble session is invalid. Refresh the session or sign in again.", "warning");
+              console.log("Session is invalid, tokens need refresh.");
+              break;
 
-          case "extension.sessionLogOut":
-            console.log("Session is logged out, tokens need refresh.");
-            break;
+            case "extension.sessionLogOut":
+              setStatus("Trimble session logged out. Sign in again and reload the extension.", "warning");
+              console.log("Session is logged out, tokens need refresh.");
+              break;
 
-          case "extension.broadcast":
-            if (args.action === "viewerCallResult")
-              console.log("Returned from direct extension", args.data);
-            break;
+            case "extension.broadcast":
+              if (args.action === "viewerCallResult")
+                console.log("Returned from direct extension", args.data);
+              break;
 
-          case "viewer.onSettingsChanged": {
-            refreshViewerApiSettings();
-            break;
+            case "viewer.onSettingsChanged": {
+              refreshViewerApiSettings();
+              break;
+            }
           }
-        }
-      }, 60000);
+        }, 60000);
+      } catch (error) {
+        console.error("Trimble connection failed", error);
+        const embeddedMessage = inIframe()
+          ? "This page is inside an iframe, but Trimble Connect did not complete the extension handshake. Check that the custom extension URL is public HTTPS, allowed by Trimble Connect, and loaded from the extension configuration."
+          : "Could not connect to the embedded Trimble viewer. Verify the embed URL, environment, and tokens.";
+        setStatus(embeddedMessage, "danger");
+        $("#embedAccessTokenDiv").show();
+        return;
+      }
 
       if(!inIframe()){
         let accessToken = $("#accessToken").val();
         let shareToken = $("#shareToken").val();
         let refreshToken = $("#refreshToken").val();
 
-        await API.embed.setTokens({accessToken, refreshToken, shareToken});
+        try {
+          await API.embed.setTokens({accessToken, refreshToken, shareToken});
 
         /*
           **** init3DViewer implementations starts ****
@@ -1000,7 +1028,13 @@
           return config;
         }, {projectId});
 
-        await API.embed.init3DViewer({...viewerConfig});
+          await API.embed.init3DViewer({...viewerConfig});
+        } catch (error) {
+          console.error("Trimble embed initialization failed", error);
+          setStatus("Connected, but the embedded 3D viewer could not initialize. Check the project ID, tokens, share token, and environment.", "danger");
+          $("#embedAccessTokenDiv").show();
+          return;
+        }
 
         /* **** init3DViewer implementations ends  **** */
       }
@@ -1014,6 +1048,7 @@
       });
 
       console.log("Listener started!");
+      setStatus(inIframe() ? "Connected to Trimble Connect extension host." : "Connected to embedded Trimble viewer.", "success");
 
       $("#main").show();
 

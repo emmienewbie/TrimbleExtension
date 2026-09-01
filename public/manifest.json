@@ -3,5 +3,6 @@
   "title": "Trimble Connect 3D Viewer Example",
   "url": "https://emmienewbie.github.io/TrimbleExtension/",
   "description": "A Trimble Connect Workspace API extension with an embedded 3D viewer.",
+  "configCommand": "config_extension",
   "enabled": true
 }

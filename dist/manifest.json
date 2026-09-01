@@ -1,9 +1,7 @@
 {
-  "name": "Trimble Connect 3D Viewer Example",
-  "version": "1.0.0",
+  "icon": "https://emmienewbie.github.io/TrimbleExtension/favicon.svg",
+  "title": "Trimble Connect 3D Viewer Example",
+  "url": "https://emmienewbie.github.io/TrimbleExtension/",
   "description": "A Trimble Connect Workspace API extension with an embedded 3D viewer.",
-  "author": "Emmie Newbie",
-  "entrypoint": "index.html",
-  "icon": "favicon.svg",
-  "permissions": []
+  "enabled": true
 }

@@ -1,7 +1,0 @@
-{
-  "title": "Trimble Viewer Sample",
-  "icon": "https://emmienewbie.github.io/TrimbleExtension/icon-192.png",
-  "url": "https://emmienewbie.github.io/TrimbleExtension/",
-  "description": "Custom Trimble Connect extension hosted on GitHub Pages.",
-  "enabled": true
-}

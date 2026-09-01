@@ -1,0 +1,9 @@
+{
+  "name": "Trimble Connect 3D Viewer Example",
+  "version": "1.0.0",
+  "description": "A Trimble Connect Workspace API extension with an embedded 3D viewer.",
+  "author": "Emmie Newbie",
+  "entrypoint": "index.html",
+  "icon": "favicon.svg",
+  "permissions": []
+}

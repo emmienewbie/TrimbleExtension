@@ -142,6 +142,12 @@
                 <input id="projectId" placeholder="Enter ProjectId" type="text" class="form-control form-control" value="">
               </div>
           </div>
+          <div class="my-3 row mb-3">
+              <label for="manifestId" class="col-sm-2 col-form-label">ManifestId (Viewer)</label>
+              <div class="col-sm-10">
+                <input id="manifestId" placeholder="Enter ManifestId for the 3D viewer" type="text" class="form-control form-control" value="">
+              </div>
+          </div>
           <div class="row my-4 col">
             <button type="button" class="btn btn-primary" onclick="doConnect()">Load 3DViewer</button>
           </div>
@@ -481,16 +487,17 @@
 
         let projectId = $("#projectId").val();
         projectId = !projectId ? "undefined" : projectId;
+        const manifestId = $("#manifestId").val();
 
         // Extracting the config object from query params.
-        const whatIsNeed = ["modelId", "versionId", "viewId", "todoId", "clashSetId", "topicId"];
+        const whatIsNeed = ["modelId", "versionId", "viewId", "todoId", "clashSetId", "topicId", "manifestId"];
         const viewerConfig = (location.search.substr(1) + "&").split("&").reduce((config, pair) => {
           const [name, value] = pair.split("=");
           if(whatIsNeed.includes(name)){
             config[name] = value;
           }
           return config;
-        }, {projectId});
+        }, {projectId, ...(manifestId ? { manifestId } : {})});
 
         await API.embed.init3DViewer({...viewerConfig});
 

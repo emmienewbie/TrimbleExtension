@@ -10,6 +10,7 @@ function App() {
   const [refreshToken, setRefreshToken] = useState('')
   const [shareToken, setShareToken] = useState('')
   const [projectId, setProjectId] = useState('')
+  const [manifestId, setManifestId] = useState('')
   const [embedURL, setEmbedURL] = useState('')
   const [projectName, setProjectName] = useState('')
   const [userName, setUserName] = useState('')
@@ -83,6 +84,7 @@ function App() {
 
         const viewerConfig = {
           projectId: projectId || 'undefined',
+          ...(manifestId ? { manifestId } : {}),
         }
 
         await api.embed.init3DViewer(viewerConfig)
@@ -164,6 +166,16 @@ function App() {
               value={projectId}
               onChange={(event) => setProjectId(event.target.value)}
               placeholder="Enter ProjectId"
+            />
+          </label>
+
+          <label className="wide">
+            <span>Manifest ID (Viewer)</span>
+            <input
+              type="text"
+              value={manifestId}
+              onChange={(event) => setManifestId(event.target.value)}
+              placeholder="Enter ManifestId"
             />
           </label>
         </div>
